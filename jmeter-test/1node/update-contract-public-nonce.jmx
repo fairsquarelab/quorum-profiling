@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Update public contract" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -200,7 +200,7 @@ props.put(&quot;to&quot;, contractAddress);</stringProp>
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;eth_sendTransaction&quot;, &quot;params&quot;:[{&quot;from&quot;: &quot;${from}&quot;, &quot;to&quot;: ${__property(to)}, &quot;gas&quot;: &quot;0x249F0&quot;, &quot;data&quot;: ${data}}], &quot;id&quot;: ${id}}</stringProp>
+                <stringProp name="Argument.value">{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;eth_sendTransaction&quot;, &quot;params&quot;:[{&quot;from&quot;: &quot;${from}&quot;, &quot;to&quot;: ${__property(to)}, &quot;nonce&quot;: &quot;${nonceInHex}&quot;, &quot;gas&quot;: &quot;0x249F0&quot;, &quot;data&quot;: ${data}}], &quot;id&quot;: ${id}}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
@@ -235,6 +235,15 @@ props.put(&quot;to&quot;, contractAddress);</stringProp>
             <stringProp name="CounterConfig.end"></stringProp>
             <stringProp name="CounterConfig.incr">1</stringProp>
             <stringProp name="CounterConfig.name">id</stringProp>
+            <stringProp name="CounterConfig.format"></stringProp>
+            <boolProp name="CounterConfig.per_user">false</boolProp>
+          </CounterConfig>
+          <hashTree/>
+          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Nonce Generator" enabled="true">
+            <stringProp name="CounterConfig.start">10</stringProp>
+            <stringProp name="CounterConfig.end"></stringProp>
+            <stringProp name="CounterConfig.incr">1</stringProp>
+            <stringProp name="CounterConfig.name">nonce</stringProp>
             <stringProp name="CounterConfig.format"></stringProp>
             <boolProp name="CounterConfig.per_user">false</boolProp>
           </CounterConfig>
@@ -301,7 +310,13 @@ String data = &quot;0x60fe47b100000000000000000000000000000000000000000000000000
 String finalData = &quot;\&quot;&quot; + data.substring(0, data.length()-randomInHex.length()) + randomInHex + &quot;\&quot;&quot;;
 
 vars.put(&quot;data&quot;,finalData);
-</stringProp>
+
+
+int nonce = Integer.parseInt(vars.get(&quot;nonce&quot;));
+String nonceInHex = &quot;0x&quot; + Integer.toHexString(nonce);
+
+vars.put(&quot;nonceInHex&quot;,nonceInHex);
+            </stringProp>
           </BeanShellPreProcessor>
           <hashTree/>
           <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Variables" enabled="true">
